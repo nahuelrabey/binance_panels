@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from analyse.transform import macd_id, macd_ema_id
+
 _oscilator_figsize = [15, 1.5]
 _plot_figsize = [15, 4]
 
@@ -85,3 +87,22 @@ def momentum_oscilators(data: pd.DataFrame, ticks: list[int]):
     plt.legend()
     plt.show()
     return
+
+
+def macd(data: pd.DataFrame, short:int, long:int, signal:int):
+    plt.figure(1, figsize=_oscilator_figsize)
+    x = data["datetime"]
+
+    plt.plot(x, [0 for x in range(0, len(x))], label="0",
+             color="black", linestyle="dashed", linewidth=1, alpha=0.8)
+
+    label = macd_id(short,long,signal)
+    y = data[label]
+    plt.plot(x, y, label=label)
+
+    label = macd_ema_id(short,long,signal)
+    y = data[label]
+    plt.plot(x, y, label=label)
+
+    plt.legend()
+    plt.show()

@@ -1,5 +1,4 @@
 from pandas import Series
-from ast import Tuple
 import pandas as pd
 
 """
@@ -75,7 +74,7 @@ def price_difference(df: pd.DataFrame, n: int) -> pd.Series:
     return diff
 
 
-def macd_exponention(df: pd.DataFrame, short: int, long: int, signal: int) -> Tuple[Series, Series]:
+def macd_exponential(df: pd.DataFrame, short: int, long: int, signal: int) -> tuple[Series, Series]:
     """
     Calculate the MACD (Moving Average Convergence Divergence) and the signal line.
 
@@ -88,8 +87,9 @@ def macd_exponention(df: pd.DataFrame, short: int, long: int, signal: int) -> Tu
     Returns:
     Tuple[Series, Series]: A tuple containing the MACD and the signal line as pandas Series.
     """
+
     short_ema = ema(df, short)
     long_ema = ema(df, long)
     macd = short_ema - long_ema
-    ema_macd = ema(macd, signal)
+    ema_macd = macd.ewm(span=signal, adjust=False).mean()
     return (macd, ema_macd)

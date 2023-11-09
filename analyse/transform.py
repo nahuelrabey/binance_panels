@@ -71,9 +71,9 @@ def batch_insert_momentum_oscilator(df: pd.DataFrame, ticks: list[int]):
         insert_momentum_oscilator(df, tick)
 
 def macd_id(short: int, long: int, signal: int):
-    return f"{short}{long}{signal}_macd"
-def macd_signal_id(short: int, long: int, signal: int):
-    return f"{short}{long}{signal}_signal"
+    return f"{short}_{long}_{signal}_macd"
+def macd_ema_id(short: int, long: int, signal: int):
+    return f"{short}_{long}_{signal}_signal"
 def insert_macd_oscilator(df: pd.DataFrame, short: int, long: int, signal: int):
     """
     Inserts the MACD oscillator values into a given DataFrame for a specified period.
@@ -87,6 +87,6 @@ def insert_macd_oscilator(df: pd.DataFrame, short: int, long: int, signal: int):
     Returns:
     pd.DataFrame: The DataFrame with new columns added: "macd", which contains the calculated MACD oscillator values, and "signal", which contains the calculated signal line values.
     """
-    macd, signal = calculate.macd_oscilator(df, short, long, signal)
+    macd, ema_macd = calculate.macd_exponential(df, short, long, signal)
     df[macd_id(short, long, signal)] = macd
-    df[macd_signal_id(short, long, signal)] = signal
+    df[macd_ema_id(short, long, signal)] = ema_macd 
