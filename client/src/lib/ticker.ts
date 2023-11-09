@@ -1,13 +1,6 @@
-// async function fetch_ticker(ticker, ticks) {
-//   const ticks_values = extractTickValues(ticks);
-//   const json = await postData(ticks_values);
-//   price = mapToPrice(json);
-//   emas = mapToEmas(json, ticks);
-
 import type { Time } from "lightweight-charts";
 
-// }
-type ChartData = {
+export type ChartData = {
   time: Time;
   value: number;
 };
@@ -16,12 +9,12 @@ export function extractTickValues(ticks: [string, number][]) {
   return ticks.map((x) => x[1]);
 }
 
-export async function postData(
+export async function postTickerMomentum(
   ticker: string,
   interval: string,
   ticks_values: number[]
 ) {
-  const res = await fetch(`/ticker`, {
+  const res = await fetch(`/ticker/momentum`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,12 +24,74 @@ export async function postData(
   return await res.json();
 }
 
+export async function postTickerMacd(
+  ticker: string,
+  interval: string,
+  ticks_values: number[],
+  short: number,
+  long: number,
+  signal: number
+) {
+  const res = await fetch(`/ticker/macd`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ticks: ticks_values,
+      ticker,
+      interval,
+      short,
+      long,
+      signal,
+    }),
+  });
+  return await res.json();
+}
+
+export async function postMacdId(short: number, long: number, signal: number) {
+  const res = await fetch(`/macd/id`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      short,
+      long,
+      signal,
+    }),
+  });
+  return await res.text();
+}
+
+export async function postMacdEmaId(
+  short: number,
+  long: number,
+  signal: number
+) {
+  const res = await fetch(`/macd/ema-id`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      short,
+      long,
+      signal,
+    }),
+  });
+  return await res.text();
+}
+
 export function mapToPrice(json: any) {
   return json.map((x: any) => ({ time: x.datetime / 1000, value: x.Close }));
 }
 
+export type Oscilator = { color: string; data: ChartData[] };
+export type OscilatorHash = { [key: string]: Oscilator };
+
 export function mapToEmas(json: any, ticks: [string, number][]) {
-  let emas: { [key: string]: { color: string; data: ChartData[] } } = {};
+  let emas: OscilatorHash = {};
   for (const [color, value] of ticks) {
     emas[value] = {
       color: color,
@@ -50,7 +105,7 @@ export function mapToEmas(json: any, ticks: [string, number][]) {
 }
 
 export function mapToMomentumOscilator(json: any, ticks: [string, number][]) {
-  let emas: { [key: string]: { color: string; data: ChartData[] } } = {};
+  let emas: OscilatorHash = {};
   for (const [color, value] of ticks) {
     emas[value] = {
       color: color,
@@ -61,11 +116,33 @@ export function mapToMomentumOscilator(json: any, ticks: [string, number][]) {
     };
   }
   emas["one"] = {
-    color:"gray",
+    color: "gray",
     data: json.map((x: any) => ({
       time: x.datetime / 1000,
       value: 1,
     })),
-  }
+  };
   return emas;
+}
+
+export function mapToMacdOscilator(
+  json: any,
+  id: string,
+  ema_id: string
+) {
+  let macdHash: OscilatorHash = {};
+  macdHash["macd"] = {
+    color: "blue",
+    data: json.map((x: any) => ({time: x.datetime / 1000, value: x[id]}))
+  }
+  macdHash["signal_macd"] = {
+    color: "red",
+    data: json.map((x: any) => ({time: x.datetime / 1000, value: x[ema_id]}))
+  }
+  macdHash["zero"]={
+    color: "gray",
+    data: json.map((x: any) => ({time: x.datetime / 1000, value: 0}))
+  }
+
+  return macdHash
 }
