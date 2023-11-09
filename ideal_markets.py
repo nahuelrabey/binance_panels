@@ -1,12 +1,12 @@
 import pandas as pd
-from main import get_data_as_df, create_ema, momentum_oscilator
+from analyse import data, transform
 
 def by_upper_ema(tickers: 'list[str]', interval:str, tick):
     # tickers = ["BTCUSDT","ETHUSDT","SOLUSDT","XRPUSDT"]
     res: 'list[list[str,pd.DataFrame]]' = []
     for ticker in tickers:
-        df = get_data_as_df(ticker,interval)
-        df = create_ema(df, tick)
+        df = data.get_binance_candlestick(ticker, interval)
+        transform.insert_ema(df, tick)
         last = df.iloc[-1]
         last_close = last["Close"]
         last_ema = last[f"{tick}_ema"]
@@ -37,12 +37,13 @@ def by_crossing_emas(tickers: 'list[str]', interval:str, ticks: 'list[int]'):
         raise ValueError("ticks list must be ordered")
 
     for ticker in tickers:
-        df = get_data_as_df(ticker,interval)
+        # df = get_data_as_df(ticker,interval)
+        df = data.get_binance_candlestick(ticker, interval)
         last_emas = []
         # last_close = df["Close"].iloc[-1]
         
         for t in ticks:
-            df = create_ema(df, t)
+            transform.insert_ema(df, t)
             last_ema = df[f"{t}_ema"].iloc[-1]
             last_emas.append(last_ema)
 
@@ -55,11 +56,9 @@ def by_momentum_oscilator(tickers:'list[str]', interval:str, tick:int):
     res: 'list[TickerDataTouple]' = []
 
     for ticker in tickers:
-        data = get_data_as_df(ticker, interval)
-        momentum = momentum_oscilator(data, tick)
-        data[f"{tick}_momentum"] = momentum
-        last_momentum = momentum.iloc[-1]
-        # last_price = data["Close"].iloc[-1]
+        df = data.get_binance_candlestick(ticker, interval)
+        transform.insert_momentum_oscilator(df, tick)
+        last_momentum = df[f"{tick}_momentum"].iloc[-1]
         if last_momentum > 1:
             res.append([ticker, data])
     
