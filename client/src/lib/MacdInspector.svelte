@@ -19,6 +19,7 @@
   export let long: number = 24;
   export let signal: number = 9;
 
+  console.log("INSIDE MACD INSPECTOR")
   console.log("ticker:", ticker);
 
   type ChartData = {
@@ -49,7 +50,6 @@
       signal
     );
 
-    console.log(json);
     price = mapToPrice(json);
     emas = mapToEmas(json, ticks);
 
@@ -57,6 +57,7 @@
     const macd_ema_id = await postMacdEmaId(short,long,signal)
 
     oscilators = mapToMacdOscilator(json, macd_id, macd_ema_id);
+    console.log("interval:", interval)
     console.log(oscilators)
   }
 
@@ -115,14 +116,6 @@
         lineWidth={2}
         lineStyle={LineStyle.Dashed}
       />
-    <!-- {#each Object.keys(oscilators) as momentum_oscilator_key}
-      <LineSeries
-        data={oscilators[momentum_oscilator_key].data}
-        reactive={true}
-        color={oscilators[momentum_oscilator_key].color}
-        lineWidth={2}
-      />
-    {/each} -->
   </Chart>
 </div>
 

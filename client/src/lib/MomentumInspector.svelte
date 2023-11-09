@@ -37,6 +37,7 @@
   ) {
     const ticks_values = extractTickValues(ticks);
     const json = await postTickerMomentum(ticker, interval, ticks_values);
+    console.log("interval", interval)
     console.log(json);
     price = mapToPrice(json);
     emas = mapToEmas(json, ticks);
