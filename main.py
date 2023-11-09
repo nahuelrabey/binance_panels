@@ -18,6 +18,16 @@ def get_tickers():
     ]
 
 def get_data_as_df(ticker:str, interval:str = "1m") -> pd.DataFrame:
+    """
+    Retrieves financial data for a specific stock ticker and returns it as a pandas DataFrame.
+
+    Parameters:
+    ticker (str): The stock symbol to retrieve data for.
+    interval (str, optional): The interval at which to retrieve data. Defaults to "1m" (one minute).
+
+    Returns:
+    pd.DataFrame: A DataFrame containing the financial data for the specified stock ticker. The DataFrame includes the following columns: "OpenTime", "Open", "High", "Low", "Close", "Volume", "CloseTime", and "datetime". The "datetime" column is the "CloseTime" column converted from milliseconds to a datetime object.
+    """
     res = client.klines(symbol=ticker, interval=interval)
     df = pd.DataFrame(res, columns=["OpenTime","Open","High","Low","Close","Volume","CloseTime","Quote","Trades","TakerBaseVolume","TakerQuoteVolume","nan"])
     df = df[["OpenTime","Open","High","Low","Close","Volume","CloseTime"]]
@@ -25,16 +35,18 @@ def get_data_as_df(ticker:str, interval:str = "1m") -> pd.DataFrame:
     df["datetime"] = pd.to_datetime(df["CloseTime"], unit="ms" )
     return df
 
-def create_ema(df:pd.DataFrame, n:int):
+def create_ema(df:pd.DataFrame, n:int) -> pd.DataFrame:
     """
-    Modify a dataframe of binance market data, adding two collumns, where n is the number of ticks to calculate de exponential moving average:
-    - "n_ema": ema value for the current candle, 
-    - "delta_n_ema": variaton of ema with n-last candle in %
-    """
+    Calculates the Exponential Moving Average (EMA) for a given DataFrame and period, and adds it as a new column to the DataFrame.
 
+    Parameters:
+    df (pd.DataFrame): The DataFrame containing the stock data. It must include a "Close" column, which represents the closing prices of the stock.
+    n (int): The period for which to calculate the EMA. This is the number of most recent closing prices that should be considered in the calculation.
+
+    Returns:
+    pd.DataFrame: The original DataFrame, with two new columns added: "{n}_ema", which contains the calculated EMA values, and "delta_{n}_ema", which contains the percentage change in the EMA from the previous period.
+    """
     close = df["Close"]
-    # delta_close = close - close.shift(n)
-    # df["delta_close"]= (delta_close / close)*100
     ema = close.ewm(span=n, adjust=False).mean()
     delta_ema = ema - ema.shift(n)
     df[f"{n}_ema"] = ema
