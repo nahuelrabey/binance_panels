@@ -28,9 +28,6 @@ def get_ticker():
     transform.batch_insert_ema(df, ticks)
     transform.batch_insert_momentum_oscilator(df, ticks)
 
-    # df = df.dropna(axis="index")
-
-    # df["datetime"] = df.astype(np.int64) // 10**9
     res = df.to_json(orient="records")
     return res
 
