@@ -1,11 +1,15 @@
 <script lang="ts">
   import MacdInspectView from "../lib/MacdInspectView.svelte";
 
-  let ticker: string = "MATICUSDT";
+  let pre_ticker: string = "MATICUSDT";
+  let ticker = pre_ticker
+
+  // $: getTicker = ()=>ticker
 </script>
 
 <main>
-  <input bind:value={ticker} placeholder="enter your ticker" />
+  <input bind:value={pre_ticker} placeholder="enter your ticker" />
+  <button on:click={()=>ticker = pre_ticker}>submit</button>
   {#key ticker}
     <MacdInspectView ticker={ticker} />
   {/key}
