@@ -48,3 +48,24 @@ export function mapToEmas(json: any, ticks: [string, number][]) {
   }
   return emas;
 }
+
+export function mapToMomentumOscilator(json: any, ticks: [string, number][]) {
+  let emas: { [key: string]: { color: string; data: ChartData[] } } = {};
+  for (const [color, value] of ticks) {
+    emas[value] = {
+      color: color,
+      data: json.map((x: any) => ({
+        time: x.datetime / 1000,
+        value: x[`${value}_momentum`],
+      })),
+    };
+  }
+  emas["one"] = {
+    color:"gray",
+    data: json.map((x: any) => ({
+      time: x.datetime / 1000,
+      value: 1,
+    })),
+  }
+  return emas;
+}
