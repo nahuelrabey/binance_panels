@@ -69,3 +69,24 @@ def batch_insert_momentum_oscilator(df: pd.DataFrame, ticks: list[int]):
 
     for tick in ticks:
         insert_momentum_oscilator(df, tick)
+
+def macd_id(short: int, long: int, signal: int):
+    return f"{short}{long}{signal}_macd"
+def macd_signal_id(short: int, long: int, signal: int):
+    return f"{short}{long}{signal}_signal"
+def insert_macd_oscilator(df: pd.DataFrame, short: int, long: int, signal: int):
+    """
+    Inserts the MACD oscillator values into a given DataFrame for a specified period.
+
+    Parameters:
+    df (pd.DataFrame): The DataFrame containing the stock data. It must include a "Close" column, which represents the closing prices of the stock.
+    short (int): The period for which to calculate the short-term EMA. This is the number of most recent closing prices that should be considered in the calculation.
+    long (int): The period for which to calculate the long-term EMA. This is the number of most recent closing prices that should be considered in the calculation.
+    signal (int): The period for which to calculate the signal line. This is the number of most recent closing prices that should be considered in the calculation.
+
+    Returns:
+    pd.DataFrame: The DataFrame with new columns added: "macd", which contains the calculated MACD oscillator values, and "signal", which contains the calculated signal line values.
+    """
+    macd, signal = calculate.macd_oscilator(df, short, long, signal)
+    df[macd_id(short, long, signal)] = macd
+    df[macd_signal_id(short, long, signal)] = signal
