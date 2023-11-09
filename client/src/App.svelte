@@ -1,21 +1,21 @@
-<script lang="ts">
-  import SimpleInspectView from "./lib/SimpleInspectView.svelte";
+<script>
+  import { Router, Link, Route } from "svelte-routing";
+  import Home from "./routes/Home.svelte";
+  import Momentum from "./routes/Momentum.svelte";
+  import Macd from "./routes/Macd.svelte";
 
-  let ticker: string = "MATICUSDT";
+  export let url = "";
 </script>
 
-<main>
-  <input bind:value={ticker} placeholder="enter your ticker" />
-  {#key ticker}
-    <SimpleInspectView ticker={ticker} />
-  {/key}
-</main>
-
-<style>
-  main{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-</style>
+<Router {url}>
+  <nav>
+    <Link to="/">Home</Link>
+    <Link to="/page/momentum">Momentum View</Link>
+    <Link to="/page/macd">MACD View</Link>
+  </nav>
+  <div>
+    <Route path="/page/momentum" component={Momentum} />
+    <Route path="/page/macd" component={Macd} />
+    <Route path="/"><Home/></Route>
+  </div>
+</Router>
