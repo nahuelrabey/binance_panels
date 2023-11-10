@@ -13,8 +13,6 @@
   export let ticker: string = "MATICUSDT";
   export let interval: string = "1m";
 
-  console.log("ticker:", ticker)
-
   type ChartData = {
     time: Time;
     value: number;
@@ -37,8 +35,6 @@
   ) {
     const ticks_values = extractTickValues(ticks);
     const json = await postTickerMomentum(ticker, interval, ticks_values);
-    console.log("interval", interval)
-    console.log(json);
     price = mapToPrice(json);
     emas = mapToEmas(json, ticks);
     momentum_oscilators = mapToMomentumOscilator(json, ticks);
@@ -49,6 +45,7 @@
 
 <div>
   <h3>{ticker} {interval}</h3>
+  {console.log("OSCILATORS:\n",momentum_oscilators)}
   <Chart
     width={800}
     height={400}

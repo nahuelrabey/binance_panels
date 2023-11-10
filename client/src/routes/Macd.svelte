@@ -1,16 +1,24 @@
 <script lang="ts">
   import MacdInspectView from "../lib/MacdInspectView.svelte";
+  import {Link} from "svelte-routing"
 
-  let pre_ticker: string = "MATICUSDT";
-  let ticker = pre_ticker
+  export let ticker: string = "MATICUSDT";
+  let input: string = ticker
 
-  // $: getTicker = ()=>ticker
+  // function onCLick(){
+  //   ticker = input
+  //   console.log(`new ticker: ${ticker}`)
+  //   console.log()
+  //   window.open(`/page/macd/${ticker}`)
+  // }
 </script>
 
 <main>
-  <input bind:value={pre_ticker} placeholder="enter your ticker" />
-  <button on:click={()=>ticker = pre_ticker}>submit</button>
+  <input bind:value={input} placeholder="enter your ticker" />
+  <!-- <button on:click={()=>onCLick()}>submit</button> -->
+  <Link to={`/page/macd/${input}`}>submit</Link>
   {#key ticker}
+    {console.log("render:", ticker)}
     <MacdInspectView ticker={ticker} />
   {/key}
 </main>

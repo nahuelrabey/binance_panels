@@ -1,11 +1,15 @@
 <script lang="ts">
-    import EmaMacdInspector from "./EmaMacdInspector.svelte";
-    export let ticker: string;
+  import Macd from "./MacdInspector.svelte";
+  export let ticker: string;
+
+  const short = 12;
+  const long = 26;
+  const signal = 9;
 </script>
 
 <div>
-  <EmaMacdInspector interval={"1m"} ticker={ticker}/>
-  <EmaMacdInspector interval={"1h"} ticker={ticker}/>
-  <EmaMacdInspector interval={"1d"} ticker={ticker}/>
-  <EmaMacdInspector interval={"1w"} ticker={ticker}/>
+  <Macd interval={"1m"} ticker={ticker} short={short} long={long} signal={signal} />
+  <Macd interval={"1h"} ticker={ticker} short={short} long={long} signal={signal} />
+  <Macd interval={"1d"} ticker={ticker} short={short} long={long} signal={signal} />
+  <Macd interval={"1w"} ticker={ticker} short={short} long={long} signal={signal} />
 </div>

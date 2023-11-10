@@ -1,9 +1,11 @@
+import { LineStyle } from "lightweight-charts";
 import type { Time } from "lightweight-charts";
 
 export type ChartData = {
   time: Time;
   value: number;
 };
+
 
 export function extractTickValues(ticks: [string, number][]) {
   return ticks.map((x) => x[1]);
@@ -87,7 +89,7 @@ export function mapToPrice(json: any) {
   return json.map((x: any) => ({ time: x.datetime / 1000, value: x.Close }));
 }
 
-export type Oscilator = { color: string; data: ChartData[] };
+export type Oscilator = { color: string; data: ChartData[], lineStyle?: LineStyle };
 export type OscilatorHash = { [key: string]: Oscilator };
 
 export function mapToEmas(json: any, ticks: [string, number][]) {
@@ -133,15 +135,18 @@ export function mapToMacdOscilator(
   let macdHash: OscilatorHash = {};
   macdHash["macd"] = {
     color: "blue",
-    data: json.map((x: any) => ({time: x.datetime / 1000, value: x[id]}))
+    data: json.map((x: any) => ({time: x.datetime / 1000, value: x[id]})),
+    lineStyle: LineStyle.Solid,
   }
   macdHash["signal_macd"] = {
     color: "red",
-    data: json.map((x: any) => ({time: x.datetime / 1000, value: x[ema_id]}))
+    data: json.map((x: any) => ({time: x.datetime / 1000, value: x[ema_id]})),
+    lineStyle: LineStyle.Dashed,
   }
   macdHash["zero"]={
     color: "gray",
-    data: json.map((x: any) => ({time: x.datetime / 1000, value: 0}))
+    data: json.map((x: any) => ({time: x.datetime / 1000, value: 0})),
+    lineStyle: LineStyle.Dashed,
   }
 
   return macdHash

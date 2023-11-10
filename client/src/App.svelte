@@ -15,7 +15,7 @@
   </nav>
   <div>
     <Route path="/page/momentum" component={Momentum} />
-    <Route path="/page/macd" component={Macd} />
+    <Route path="/page/macd/:ticker" let:params><Macd ticker={params.ticker}/></Route>
     <Route path="/"><Home/></Route>
   </div>
 </Router>
