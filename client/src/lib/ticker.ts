@@ -91,8 +91,9 @@ export function mapToPrice(json: any) {
 
 export type Oscilator = { color: string; data: ChartData[], lineStyle?: LineStyle };
 export type OscilatorHash = { [key: string]: Oscilator };
+export type Tick = [string, number]
 
-export function mapToEmas(json: any, ticks: [string, number][]) {
+export function mapToEmas(json: any, ticks: Tick[]) {
   let emas: OscilatorHash = {};
   for (const [color, value] of ticks) {
     emas[value] = {
@@ -106,7 +107,7 @@ export function mapToEmas(json: any, ticks: [string, number][]) {
   return emas;
 }
 
-export function mapToMomentumOscilator(json: any, ticks: [string, number][]) {
+export function mapToMomentumOscilator(json: any, ticks: Tick[]) {
   let emas: OscilatorHash = {};
   for (const [color, value] of ticks) {
     emas[value] = {

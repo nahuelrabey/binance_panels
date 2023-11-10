@@ -1,5 +1,5 @@
 <script lang="ts">
-  import MacdInspectView from "../lib/MacdInspectView.svelte";
+  import MacdInspectView from "../lib/Macd/InspectView.svelte";
   import {Link} from "svelte-routing"
 
   export let ticker: string = "MATICUSDT";

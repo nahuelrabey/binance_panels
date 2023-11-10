@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Chart, LineSeries } from "svelte-lightweight-charts";
-  import { LineStyle } from "lightweight-charts";
+  import Ema from "../Ema/index.svelte";
   import type { Time } from "lightweight-charts";
   import {
     extractTickValues,
@@ -64,9 +64,8 @@
 
 <div>
   <h3>{ticker} {interval}</h3>
-  <!-- {#key oscilators} -->
-  {console.log("OSCILATORS:",oscilators)}
-  <Chart
+  <Ema emas={emas} price={price}/>
+  <!-- <Chart
     width={800}
     height={400}
     timeScale={{
@@ -85,7 +84,7 @@
         lineWidth={2}
       />
     {/each}
-  </Chart>
+  </Chart> -->
   <Chart
     width={800}
     height={200}

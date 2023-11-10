@@ -1,29 +1,20 @@
 <script lang="ts">
-  import { Chart, LineSeries } from "svelte-lightweight-charts";
-  import { LineStyle } from "lightweight-charts";
+  import Ema from "../Ema/index.svelte";
+  import Oscilator from "./Oscilator.svelte";
   import type { Time } from "lightweight-charts";
   import {
     extractTickValues,
-    mapToEmas,
-    mapToMomentumOscilator,
     mapToPrice,
     postTickerMomentum,
+    type ChartData,
+    type Tick,
   } from "../ticker";
 
   export let ticker: string = "MATICUSDT";
   export let interval: string = "1m";
 
-  type ChartData = {
-    time: Time;
-    value: number;
-  };
-
   let price: ChartData[] = [];
-  let emas: { [key: string]: { color: string; data: ChartData[] } } = {};
-  let momentum_oscilators: {
-    [key: string]: { color: string; data: ChartData[] };
-  } = {};
-  let ticks: [string, number][] = [
+  let ticks: Tick[] = [
     ["green", 10],
     ["orange", 40],
     ["red", 60],
@@ -36,8 +27,6 @@
     const ticks_values = extractTickValues(ticks);
     const json = await postTickerMomentum(ticker, interval, ticks_values);
     price = mapToPrice(json);
-    emas = mapToEmas(json, ticks);
-    momentum_oscilators = mapToMomentumOscilator(json, ticks);
   }
 
   fetch_ticker(ticker, ticks, interval);
@@ -45,44 +34,10 @@
 
 <div>
   <h3>{ticker} {interval}</h3>
-  {console.log("OSCILATORS:\n",momentum_oscilators)}
-  <Chart
-    width={800}
-    height={400}
-    timeScale={{
-      secondsVisible: true,
-      timeVisible: true,
-    }}
-  >
-    <LineSeries data={price} reactive={true} lineWidth={2} title="Price"/>
-    {#each Object.keys(emas) as ema_key}
-      <LineSeries
-        title = {ema_key}
-        data={emas[ema_key].data}
-        reactive={true}
-        lineStyle={LineStyle.Dashed}
-        color={emas[ema_key].color}
-        lineWidth={2}
-      />
-    {/each}
-  </Chart>
-  <Chart
-    width={800}
-    height={200}
-    timeScale={{
-      secondsVisible: true,
-      timeVisible: true,
-    }}
-  >
-    {#each Object.keys(momentum_oscilators) as momentum_oscilator_key}
-      <LineSeries
-        data={momentum_oscilators[momentum_oscilator_key].data}
-        reactive={true}
-        color={momentum_oscilators[momentum_oscilator_key].color}
-        lineWidth={2}
-      />
-    {/each}
-  </Chart>
+  {#key price}
+  <Ema price={price} ticks={ticks}/>
+  <Oscilator price={price} ticks={ticks}/>
+  {/key}
 </div>
 
 

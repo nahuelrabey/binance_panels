@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Link } from "svelte-routing";
-  import MomentumInspectView from "../lib/MomentumInspectView.svelte";
+  import MomentumInspectView from "../lib/Momentum/InspectView.svelte";
 
   export let ticker: string = "MATICUSDT";
   let input: string = ticker;
