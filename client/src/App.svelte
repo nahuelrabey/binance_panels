@@ -10,12 +10,16 @@
 <Router {url}>
   <nav>
     <Link to="/">Home</Link>
-    <Link to="/page/momentum">Momentum View</Link>
-    <Link to="/page/macd">MACD View</Link>
+    <Link to="/page/momentum/BTCUSDT">Momentum View</Link>
+    <Link to="/page/macd/BTCUSDT">MACD View</Link>
   </nav>
   <div>
-    <Route path="/page/momentum" component={Momentum} />
-    <Route path="/page/macd/:ticker" let:params><Macd ticker={params.ticker}/></Route>
-    <Route path="/"><Home/></Route>
+    <Route path="/page/momentum/:ticker" let:params
+      ><Momentum ticker={params.ticker} /></Route
+    >
+    <Route path="/page/macd/:ticker" let:params
+      ><Macd ticker={params.ticker} /></Route
+    >
+    <Route path="/"><Home /></Route>
   </div>
 </Router>

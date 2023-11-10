@@ -5,12 +5,6 @@
   export let ticker: string = "MATICUSDT";
   let input: string = ticker
 
-  // function onCLick(){
-  //   ticker = input
-  //   console.log(`new ticker: ${ticker}`)
-  //   console.log()
-  //   window.open(`/page/macd/${ticker}`)
-  // }
 </script>
 
 <main>
