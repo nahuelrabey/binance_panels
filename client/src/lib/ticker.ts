@@ -94,6 +94,8 @@ export type OscilatorHash = { [key: string]: Oscilator };
 export type Tick = [string, number]
 
 export function mapToEmas(json: any, ticks: Tick[]) {
+  
+
   let emas: OscilatorHash = {};
   for (const [color, value] of ticks) {
     emas[value] = {
@@ -109,6 +111,12 @@ export function mapToEmas(json: any, ticks: Tick[]) {
 
 export function mapToMomentumOscilator(json: any, ticks: Tick[]) {
   let emas: OscilatorHash = {};
+
+  json.forEach((element: any) => {
+    console.log(element.time/1000) 
+    // console.log(element.c)
+  });
+
   for (const [color, value] of ticks) {
     emas[value] = {
       color: color,

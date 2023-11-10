@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Chart, LineSeries } from "svelte-lightweight-charts";
   import Ema from "../Ema/index.svelte";
-  import type { Time } from "lightweight-charts";
   import {
     extractTickValues,
     mapToEmas,
@@ -10,8 +9,8 @@
     postMacdEmaId,
     postMacdId,
     postTickerMacd,
-    type OscilatorHash,
   } from "../ticker";
+  import Oscilator from "./Oscilator.svelte";
 
   export let ticker: string = "MATICUSDT";
   export let interval: string = "1m";
@@ -19,14 +18,6 @@
   export let long: number = 24;
   export let signal: number = 9;
 
-  type ChartData = {
-    time: Time;
-    value: number;
-  };
-
-  let price: ChartData[] = [];
-  let emas: { [key: string]: { color: string; data: ChartData[] } } = {};
-  let oscilators: OscilatorHash = {};
   let ticks: [string, number][] = [
     ["green", 10],
     ["orange", 40],
@@ -37,7 +28,6 @@
     ticks: [string, number][],
     interval: string
   ) {
-    const start = new Date().getTime();
     const ticks_values = extractTickValues(ticks);
     const json = await postTickerMacd(
       ticker,
@@ -48,62 +38,48 @@
       signal
     );
 
-    price = mapToPrice(json);
-    emas = mapToEmas(json, ticks);
-
     const macd_id = await postMacdId(short, long, signal);
     const macd_ema_id = await postMacdEmaId(short, long, signal);
-
-    oscilators = mapToMacdOscilator(json, macd_id, macd_ema_id);
-    const end = new Date().getTime();
-    console.log(`fetch_ticker took ${end - start} ms`);
+    return {
+      json,
+      macd_id,
+      macd_ema_id,
+    };
   }
 
-  fetch_ticker(ticker, ticks, interval).catch((e) => console.log(e));
+  const promise = fetch_ticker(ticker, ticks, interval);
 </script>
 
 <div>
   <h3>{ticker} {interval}</h3>
-  <Ema emas={emas} price={price}/>
-  <!-- <Chart
-    width={800}
-    height={400}
-    timeScale={{
-      secondsVisible: true,
-      timeVisible: true,
-    }}
-  >
-    <LineSeries data={price} reactive={true} lineWidth={2} title="Price" />
-    {#each Object.keys(emas) as ema_key}
-      <LineSeries
-        title={ema_key}
-        data={emas[ema_key].data}
-        reactive={true}
-        lineStyle={LineStyle.Dashed}
-        color={emas[ema_key].color}
-        lineWidth={2}
-      />
-    {/each}
-  </Chart> -->
-  <Chart
-    width={800}
-    height={200}
-    timeScale={{
-      secondsVisible: true,
-      timeVisible: true,
-    }}
-  >
-    {#each Object.keys(oscilators) as key}
-      <LineSeries
-        data={oscilators[key].data}
-        reactive={true}
-        color={oscilators[key].color}
-        lineWidth={2}
-        lineStyle={oscilators[key].lineStyle}
-      />
-    {/each}
-
-  </Chart>
+  {#await promise}
+    <p>Loading...</p>
+  {:then { json, macd_ema_id, macd_id }}
+    <Chart
+      width={900}
+      height={500}
+      timeScale={{
+        secondsVisible: true,
+        timeVisible: true,
+      }}
+      leftPriceScale={{
+        visible: true,
+        scaleMargins: {
+          top: 0.85,
+          bottom: 0,
+        },
+      }}
+      rightPriceScale={{
+        visible: true,
+      }}
+      crosshair={{
+        mode: 0,
+      }}
+    >
+      <Ema ticker_data={json} {ticks} />
+      <Oscilator ticker_data={json} id={macd_id} ema_id={macd_ema_id} />
+    </Chart>
+  {/await}
 </div>
 
 <style>
