@@ -1,18 +1,15 @@
 <script lang="ts">
+  import { Link } from "svelte-routing";
   import MomentumInspectView from "../lib/MomentumInspectView.svelte";
 
-  let pre_ticker: string = "MATICUSDT";
-  let ticker = pre_ticker;
+  export let ticker: string = "MATICUSDT";
+  let input: string = ticker;
 
-  function onCLick(){
-    ticker = pre_ticker
-    console.log(`new ticker: ${ticker}`)
-  }
 </script>
 
 <main>
-  <input bind:value={pre_ticker} placeholder="enter your ticker" />
-  <button on:click={() => onCLick()}>submit</button>
+  <input bind:value={input} placeholder="enter your ticker" />
+  <Link to={`/page/momentum/${input}`}>submit</Link>
   {#key ticker}
     {console.log("render:", ticker)}
     <MomentumInspectView ticker={ticker} />
