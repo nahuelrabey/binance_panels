@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Momentum from "./MomentumInspector.svelte";
+  import Momentum from "./Inspector.svelte";
   export let ticker: string;
 </script>
 

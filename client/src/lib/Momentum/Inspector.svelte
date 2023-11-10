@@ -8,7 +8,7 @@
     mapToMomentumOscilator,
     mapToPrice,
     postTickerMomentum,
-  } from "./ticker";
+  } from "../ticker";
 
   export let ticker: string = "MATICUSDT";
   export let interval: string = "1m";

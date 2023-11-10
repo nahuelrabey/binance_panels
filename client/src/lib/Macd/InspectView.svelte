@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Macd from "./MacdInspector.svelte";
+  import Macd from "./Inspector.svelte";
   export let ticker: string;
 
   const short = 12;
