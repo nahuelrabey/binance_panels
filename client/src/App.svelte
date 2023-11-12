@@ -23,8 +23,8 @@
     <Route path="/page/macd/:ticker" let:params
       ><Macd ticker={params.ticker} /></Route
     >
-    <Route path="/page/trade/:ticker" let:params
-      ><Trade ticker={params.ticker} /></Route
+    <Route path="/page/trade/:ticker/:interval" let:params
+      ><Trade ticker={params.ticker} interval={params.interval}/></Route
     >
   </div>
 </Router>
