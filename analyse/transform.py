@@ -41,6 +41,8 @@ def batch_insert_ema(df: pd.DataFrame, ticks: list[int]):
     for tick in ticks:
         insert_ema(df, tick)
 
+def momentum_id(n: int):
+    return f"{n}_momentum"
 def insert_momentum_oscilator(df: pd.DataFrame, n: int):
     """
     Inserts the momentum oscillator values into a given DataFrame for a specified period.
@@ -53,7 +55,7 @@ def insert_momentum_oscilator(df: pd.DataFrame, n: int):
     pd.DataFrame: The DataFrame with a new column "{n}_momentum" added, which contains the calculated momentum oscillator values.
     """
     momentum = calculate.momentum_oscilator(df, n)
-    df[f"{n}_momentum"] = momentum
+    df[momentum_id(n)] = momentum
 
 def batch_insert_momentum_oscilator(df: pd.DataFrame, ticks: list[int]):
     """
