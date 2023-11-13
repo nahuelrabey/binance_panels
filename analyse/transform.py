@@ -13,6 +13,8 @@ Functions:
 Each function takes a DataFrame containing stock data and a period (or list of periods) as parameters, and modifies the DataFrame to include a new column (or columns) containing the calculated values for the given indicator. The DataFrame must include a "Close" column, which represents the closing prices of the stock.
 """
 
+def ema_id(n: int):
+    return f"{n}_ema"
 def insert_ema(df: pd.DataFrame, n: int):
     """
     Inserts the Exponential Moving Average (EMA) values into a given DataFrame for a specified period.
@@ -25,7 +27,7 @@ def insert_ema(df: pd.DataFrame, n: int):
     pd.DataFrame: The DataFrame with a new column "{n}_ema" added, which contains the calculated EMA values for the given number of periods.
     """
     ema = calculate.ema(df, n)
-    df[f"{n}_ema"] = ema
+    df[ema_id(n)] = ema
 
 def batch_insert_ema(df: pd.DataFrame, ticks: list[int]):
     """
