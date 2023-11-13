@@ -19,19 +19,15 @@ def log(ticker_name: str, text: str):
 class StrategyVariables(metaclass=ABCMeta):
     def print() -> None:
         pass
-    def save_to_pandas(self, position: Position, df: pd.DataFrame):
-        pass
-    def save_to_csv(self, position: Position, fileName='output.csv'):
-        pass
 
 class BaseStrategy(metaclass=ABCMeta):
-    def run(self):
+    def execute(self, ticker: pd.DataFrame) -> StrategyVariables:
         pass
     def create_pandas()-> pd.DataFrame:
         pass
-    def save_to_pandas(self):
+    def save_to_pandas(self, variables: StrategyVariables, data: pd.DataFrame):
         pass 
-    def save_to_csv(self):
+    def save_to_csv(self, fileName='output.csv'):
         pass
 
 # type Strategy = Callable[[pd.DataFrame, Position, bool], StrategyVariables]

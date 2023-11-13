@@ -47,57 +47,52 @@ def buy_macd_momentum_condtion(variables: MacdMomentumVariables) -> bool:
     return macd_above_ema_macd and macd_positive and ema_macd_positive and momentum_above_one
 
 class Strategy(BaseStrategy):
-    def __init__(self, ticker_name: str, ticker_data: pd.DataFrame, position: Position, verbose=False):
-        self.ticker_name = ticker_name
-        self.ticker_data = ticker_data
+    def __init__(self, position: Position, verbose=False):
+        # self.ticker_data = ticker_data
         self.position = position
         self.verbose = verbose
         # self.variables: MacdMomentumVariables | None = None
     
-    def excecute(self):
-        last_price, last_datetime = get_ticker_last_data(self.ticker)
-        last_macd, last_ema_macd, last_momentum = calculate_indicators(self.ticker)
+    def execute(self, ticker: pd.DataFrame) -> MacdMomentumVariables:
+        last_price, last_datetime = get_ticker_last_data(ticker)
+        last_macd, last_ema_macd, last_momentum = calculate_indicators(ticker)
         variables = MacdMomentumVariables(last_datetime, last_price, last_macd, last_ema_macd, last_momentum)
         
-        if (buy_macd_momentum_condtion(self.variables)):
+        if (buy_macd_momentum_condtion(variables)):
             if (self.position.is_traded()):
-                return self.variables
+                return variables
 
             self.position.founds -= self.position.max_trade
             self.position.coin_traded += self.position.max_trade / last_price
             self.position.traded += self.position.max_trade
-
-            # if (self.verbose):
-            #     print("\n\tBUY")
-            #     self.position.print_buy_table(last_price)
         
-        if (not buy_macd_momentum_condtion(self.variables)):
+        if (not buy_macd_momentum_condtion(variables)):
             if (self.position.coin_traded == 0):
-                return last_datetime, last_price, last_macd, last_ema_macd, last_momentum
+                return variables
 
             self.position.sell = self.position.coin_traded * last_price
             self.position.founds += self.position.sell
             self.position.coin_traded = 0
             self.position.traded = 0
-            self.position.gained += self.position.sell - self.position.max_tradeI
+            self.position.gained += self.position.sell - self.position.max_trade
         
         return variables
     
-    def create_pandas() -> pd.DataFrame:
+    def create_pandas(self = None) -> pd.DataFrame:
         return pd.DataFrame(columns=["datetime", "founds", "coin_traded", "traded", "gained", "max_trade", "last_price", "last_macd", "last_ema_macd", "last_momentum"])
 
-    def save_to_pandas(self, position: Position, df: pd.DataFrame):
+    def save_to_pandas(self, variables:MacdMomentumVariables, data: pd.DataFrame):
         new_row = {
-            "datetime": self.last_datetime,
-            "founds": position.founds,
-            "coin_traded": position.coin_traded,
-            "traded": position.traded,
-            "gained": position.gained,
-            "max_trade": position.max_trade,
-            "last_price": self.last_price,
-            "last_macd": self.last_macd,
-            "last_ema_macd": self.last_ema_macd,
-            "last_momentum": self.last_momentum
+            "datetime": variables.last_datetime,
+            "founds": self.position.founds,
+            "coin_traded": self.position.coin_traded,
+            "traded": self.position.traded,
+            "gained": self.position.gained,
+            "max_trade": self.position.max_trade,
+            "last_price": variables.last_price,
+            "last_macd": variables.last_macd,
+            "last_ema_macd": variables.last_ema_macd,
+            "last_momentum": variables.last_momentum
         }
 
-        df.loc[len(df)] = new_row
+        data.loc[len(data)] = new_row
