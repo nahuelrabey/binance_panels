@@ -19,6 +19,17 @@ class Position:
         print(f"{self.founds:<10.2f}{self.traded:<10.2f}{self.gained:<10.2f}{
             self.max_trade:<10.2f}{self.coin_traded:<10.2e}{self.coin_traded*last_price:<10.2f}")
 
+    def buy(self, last_price: float):
+        self.founds -= self.max_trade
+        self.coin_traded += self.max_trade / last_price
+        self.traded += self.max_trade
+    
+    def sell(self, last_price: float):
+        sell = self.coin_traded * last_price
+        self.founds += sell
+        self.coin_traded = 0
+        self.traded = 0
+        self.gained += sell - self.max_trade
     # def save_to_csv(self, last_date: pd.Timestamp, last_price: float, last_ema_macd: float, last_macd: float, last_momentum: float, fileName='output.csv'):
     #     with open(fileName, 'a', newline='') as file:
     #         writer = csv.writer(file)
