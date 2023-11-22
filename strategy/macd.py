@@ -15,10 +15,7 @@ class MacdVariables(StrategyVariables):
         print(f"{'datetime':<15}{'Last Price':<15}{'Last MACD':<15}{'Last EMA MACD':<15}")
         print(f"{self.last_datetime:<15.2f}{self.last_price:<15.2f}{self.last_macd:<15.2f}{self.last_ema_macd:<15.2f}")
 
-def calculate_indicators(ticker: pd.DataFrame) -> Tuple[float, float]:
-    short: int = 12
-    long: int = 26
-    signal: int = 9
+def calculate_indicators(ticker: pd.DataFrame, short:int, long:int, signal: int) -> Tuple[float, float]:
 
     transform.insert_macd_oscilator(ticker, short, long, signal)
 
@@ -38,14 +35,17 @@ def buy_macd_condtion(variables: MacdVariables) -> bool:
     return macd_above_ema_macd and macd_positive and ema_macd_positive
 
 class Strategy(BaseStrategy):
-    def __init__(self, ticker_name: str, position: Position, verbose=False):
+    def __init__(self, ticker_name: str, position: Position, verbose=False, short: int = 12, long: int = 26, signal: int = 9):
         self.ticker_name = ticker_name
         self.position = position
         self.verbose = verbose
+        self.short = short
+        self.long = long
+        self.signal = signal
     
     def execute(self, ticker_data: pd.DataFrame) -> MacdVariables:
         last_price, last_datetime = get_ticker_last_data(ticker_data)
-        last_macd, last_ema_macd = calculate_indicators(ticker_data)
+        last_macd, last_ema_macd = calculate_indicators(ticker_data, self.short, self.long, self.signal)
 
         variables = MacdVariables(last_datetime, last_price, last_macd, last_ema_macd)
 
